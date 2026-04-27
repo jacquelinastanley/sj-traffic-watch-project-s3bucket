@@ -78,7 +78,7 @@ That's it — your site is live! 🎉
 ## 📝 Medium Article
 
 A full step-by-step walkthrough of this project is available on Medium:
-👉 [Read the article](#https://medium.com/@jacquelinastanley/how-i-built-a-free-public-traffic-info-site-for-subang-jaya-using-aws-s3-71bb5c2d182d) 
+👉 [Read the article](https://medium.com/@jacquelinastanley/how-i-built-a-free-public-traffic-info-site-for-subang-jaya-using-aws-s3-71bb5c2d182d) 
 
 ---
 
