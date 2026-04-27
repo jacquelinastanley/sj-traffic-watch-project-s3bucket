@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SJ Traffic Watch — Subang Jaya Live Hours</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161d;
+      --card: #1a1e28;
+      --border: #252a38;
+      --accent: #f5a623;
+      --accent2: #e84c4c;
+      --accent3: #3ecf8e;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,166,35,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-dot {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(245,166,35,0.4); }
+      50% { opacity: 0.8; transform: scale(1.1); box-shadow: 0 0 0 8px rgba(245,166,35,0); }
+    }
+
+    .logo h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .logo h1 span { color: var(--accent); }
+
+    .header-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.75rem;
+      letter-spacing: 0.1em;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 4rem 2rem 3rem;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero h2 {
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h2 em {
+      font-style: normal;
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    /* Live status bar */
+    .status-bar {
+      position: relative;
+      z-index: 1;
+      margin: 0 2rem 3rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      max-width: 900px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-red { background: var(--accent2); animation: pulse 1.5s infinite; }
+    .dot-amber { background: var(--accent); }
+    .dot-green { background: var(--accent3); }
+
+    /* Traffic cards */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 0 2rem 4rem;
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      max-width: 900px;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+
+    .card:hover { background: #1e2334; }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+    }
+
+    .card.heavy::after { background: var(--accent2); }
+    .card.moderate::after { background: var(--accent); }
+    .card.light::after { background: var(--accent3); }
+
+    .card-road {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: var(--muted);
+    }
+
+    .card-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .card.heavy .card-status { background: rgba(232,76,76,0.12); color: var(--accent2); border: 1px solid rgba(232,76,76,0.2); }
+    .card.moderate .card-status { background: rgba(245,166,35,0.12); color: var(--accent); border: 1px solid rgba(245,166,35,0.2); }
+    .card.light .card-status { background: rgba(62,207,142,0.12); color: var(--accent3); border: 1px solid rgba(62,207,142,0.2); }
+
+    .card-times {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .card-times strong { color: var(--text); }
+
+    /* Peak hours timeline */
+    .timeline-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 2rem 4rem;
+      max-width: 900px;
+    }
+
+    .timeline-bar {
+      height: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      display: flex;
+    }
+
+    .timeline-segment {
+      height: 100%;
+      transition: opacity 0.2s;
+    }
+
+    .timeline-segment:hover { opacity: 0.8; }
+    .t-light { background: var(--accent3); }
+    .t-mod { background: var(--accent); }
+    .t-heavy { background: var(--accent2); }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .timeline-row {
+      margin-bottom: 1.5rem;
+    }
+
+    .timeline-road-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .legend-box { width: 12px; height: 12px; flex-shrink: 0; }
+
+    /* Tips section */
+    .tips {
+      position: relative;
+      z-index: 1;
+      padding: 0 2rem 4rem;
+      max-width: 900px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .tip-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+
+    .tip-number {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .tip-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      header, .section, .timeline-section, .tips, footer { padding-left: 1rem; padding-right: 1rem; }
+      .status-bar { margin: 0 1rem 2rem; }
+      .hero { padding: 2.5rem 1rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <h1>SJ <span>Traffic</span> Watch</h1>
+    </div>
+    <div class="header-tag">SUBANG JAYA · SELANGOR · MY</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-eyebrow">// Community Traffic Guide</div>
+    <h2>Know Before <em>You Go.</em></h2>
+    <p>Avoid the jam. This community-sourced guide breaks down peak traffic hours across major roads in Subang Jaya — so you can plan smarter commutes every day.</p>
+  </section>
+
+  <div class="status-bar">
+    <div class="status-item">
+      <div class="status-dot dot-red"></div>
+      <span>Heavy: Federal Highway, NPE</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot dot-amber"></div>
+      <span>Moderate: Jalan SS15, LDP</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot dot-green"></div>
+      <span>Light: USJ roads post-9am</span>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-title">// Road Conditions Overview</div>
+    <div class="cards-grid">
+
+      <div class="card heavy">
+        <div class="card-road">E01 · Highway</div>
+        <div class="card-name">Federal Highway</div>
+        <div class="card-status"><span>●</span> Heavy Traffic</div>
+        <div class="card-times">
+          <div>AM Peak: <strong>7:00 – 9:30 AM</strong></div>
+          <div>PM Peak: <strong>5:30 – 8:00 PM</strong></div>
+          <div>Best time: <strong>After 9PM</strong></div>
+        </div>
+      </div>
+
+      <div class="card heavy">
+        <div class="card-road">NPE · Expressway</div>
+        <div class="card-name">New Pantai Expressway</div>
+        <div class="card-status"><span>●</span> Heavy Traffic</div>
+        <div class="card-times">
+          <div>AM Peak: <strong>7:30 – 9:00 AM</strong></div>
+          <div>PM Peak: <strong>5:00 – 7:30 PM</strong></div>
+          <div>Best time: <strong>10AM – 3PM</strong></div>
+        </div>
+      </div>
+
+      <div class="card moderate">
+        <div class="card-road">LDP · Highway</div>
+        <div class="card-name">Lebuhraya Damansara–Puchong</div>
+        <div class="card-status"><span>●</span> Moderate Traffic</div>
+        <div class="card-times">
+          <div>AM Peak: <strong>7:00 – 8:30 AM</strong></div>
+          <div>PM Peak: <strong>5:30 – 7:00 PM</strong></div>
+          <div>Best time: <strong>9AM – 4PM</strong></div>
+        </div>
+      </div>
+
+      <div class="card moderate">
+        <div class="card-road">SS15 · Town Road</div>
+        <div class="card-name">Jalan SS15 / Subang Parade</div>
+        <div class="card-status"><span>●</span> Moderate Traffic</div>
+        <div class="card-times">
+          <div>AM Peak: <strong>8:00 – 9:30 AM</strong></div>
+          <div>PM Peak: <strong>6:00 – 8:00 PM</strong></div>
+          <div>Best time: <strong>After 9PM</strong></div>
+        </div>
+      </div>
+
+      <div class="card light">
+        <div class="card-road">USJ · Local Roads</div>
+        <div class="card-name">USJ 1–25 Residential</div>
+        <div class="card-status"><span>●</span> Light Traffic</div>
+        <div class="card-times">
+          <div>Busy: <strong>School hours only</strong></div>
+          <div>PM Peak: <strong>6:00 – 7:30 PM</strong></div>
+          <div>Best time: <strong>9AM – 2PM</strong></div>
+        </div>
+      </div>
+
+      <div class="card moderate">
+        <div class="card-road">SJE · Link Road</div>
+        <div class="card-name">Subang–KL Elevated Highway</div>
+        <div class="card-status"><span>●</span> Moderate Traffic</div>
+        <div class="card-times">
+          <div>AM Peak: <strong>7:30 – 9:00 AM</strong></div>
+          <div>PM Peak: <strong>5:30 – 7:30 PM</strong></div>
+          <div>Best time: <strong>Midday</strong></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="timeline-section">
+    <div class="section-title">// Daily Traffic Intensity by Hour</div>
+
+    <div class="timeline-row">
+      <div class="timeline-road-name"><span>Federal Highway</span><span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent2)">HEAVY</span></div>
+      <div class="timeline-bar">
+        <div class="timeline-segment t-light" style="width:12%"></div>
+        <div class="timeline-segment t-heavy" style="width:15%"></div>
+        <div class="timeline-segment t-mod" style="width:18%"></div>
+        <div class="timeline-segment t-light" style="width:20%"></div>
+        <div class="timeline-segment t-mod" style="width:10%"></div>
+        <div class="timeline-segment t-heavy" style="width:17%"></div>
+        <div class="timeline-segment t-light" style="width:8%"></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-road-name"><span>LDP Expressway</span><span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent)">MODERATE</span></div>
+      <div class="timeline-bar">
+        <div class="timeline-segment t-light" style="width:14%"></div>
+        <div class="timeline-segment t-mod" style="width:14%"></div>
+        <div class="timeline-segment t-light" style="width:22%"></div>
+        <div class="timeline-segment t-light" style="width:15%"></div>
+        <div class="timeline-segment t-mod" style="width:16%"></div>
+        <div class="timeline-segment t-light" style="width:19%"></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-road-name"><span>USJ Residential</span><span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent3)">LIGHT</span></div>
+      <div class="timeline-bar">
+        <div class="timeline-segment t-light" style="width:10%"></div>
+        <div class="timeline-segment t-mod" style="width:10%"></div>
+        <div class="timeline-segment t-light" style="width:40%"></div>
+        <div class="timeline-segment t-mod" style="width:10%"></div>
+        <div class="timeline-segment t-light" style="width:30%"></div>
+      </div>
+    </div>
+
+    <div class="timeline-labels">
+      <span>6AM</span><span>8AM</span><span>10AM</span><span>12PM</span><span>2PM</span><span>4PM</span><span>6PM</span><span>8PM</span><span>10PM</span>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box" style="background:var(--accent3)"></div> Light flow</div>
+      <div class="legend-item"><div class="legend-box" style="background:var(--accent)"></div> Moderate congestion</div>
+      <div class="legend-item"><div class="legend-box" style="background:var(--accent2)"></div> Heavy jam</div>
+    </div>
+  </section>
+
+  <section class="tips">
+    <div class="section-title">// Commuter Tips</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-number">01</div>
+        <div class="tip-title">Leave Before 7AM</div>
+        <div class="tip-body">Beat the morning rush on Federal Highway and NPE by departing before 7AM. Traffic spikes sharply after 7:30AM.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-number">02</div>
+        <div class="tip-title">Use LDP for Midday</div>
+        <div class="tip-body">Between 9AM–4PM, LDP is your best bet between Subang Jaya and PJ. Avoid Federal Highway during those windows.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-number">03</div>
+        <div class="tip-title">Avoid SS15 at Lunch</div>
+        <div class="tip-body">The SS15 Subang Parade area gets congested between 12–2PM due to lunch crowds. Add 15–20 minutes buffer.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-number">04</div>
+        <div class="tip-title">Friday PM is Worst</div>
+        <div class="tip-body">Friday evenings from 5PM onwards are the worst of the week. Consider WFH or delay departure until after 8:30PM.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>SJ Traffic Watch · Community Project · Subang Jaya, Selangor</p>
+    <p>Hosted on <a href="#">Amazon S3</a> · <a href="#">GitHub</a> · Data is community-sourced & indicative only</p>
+  </footer>
+
+</body>
+</html>

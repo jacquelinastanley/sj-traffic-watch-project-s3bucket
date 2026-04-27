@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 — Page Not Found · SJ Traffic Watch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --card: #1a1e28;
+      --border: #252a38;
+      --accent: #f5a623;
+      --accent2: #e84c4c;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,166,35,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 540px;
+    }
+
+    .error-code {
+      font-size: clamp(6rem, 18vw, 11rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: var(--border);
+      position: relative;
+      margin-bottom: 0;
+      user-select: none;
+    }
+
+    .error-code::after {
+      content: '404';
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+      opacity: 0.3;
+      animation: flicker 3s ease-in-out infinite;
+    }
+
+    @keyframes flicker {
+      0%, 90%, 100% { opacity: 0.3; }
+      92% { opacity: 0; }
+      94% { opacity: 0.3; }
+      96% { opacity: 0.1; }
+      98% { opacity: 0.3; }
+    }
+
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin: 1.5rem auto;
+    }
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.8rem 1.6rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    .road-sign {
+      margin-top: 3rem;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .road-sign-box {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    .road-sign-post {
+      width: 2px;
+      height: 28px;
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="error-code">404</div>
+    <div class="divider"></div>
+    <div class="label">// Dead End</div>
+    <h1>This Road Doesn't Exist</h1>
+    <p>Looks like you took a wrong turn. The page you're looking for isn't here — maybe it was removed, or the URL is incorrect. Head back to the main route.</p>
+    <a class="btn" href="/index.html">← Back to Traffic Dashboard</a>
+
+    <div class="road-sign">
+      <div class="road-sign-box">SJ TRAFFIC WATCH · SUBANG JAYA</div>
+      <div class="road-sign-post"></div>
+    </div>
+  </div>
+
+</body>
+</html>
